@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Tambahkan 3 baris ini:
+  http: ^1.2.0             # Untuk akses API
+  provider: ^6.1.1         # Untuk state management
+  shared_preferences: ^2.2.2 # Untuk local storage
 
 dev_dependencies:
   flutter_test:
