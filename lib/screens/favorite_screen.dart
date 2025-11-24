@@ -15,22 +15,43 @@ class FavoriteScreen extends StatelessWidget {
           if (provider.favorites.isEmpty) {
             return const Center(child: Text("No favorites added yet."));
           }
+
           return ListView.builder(
             padding: const EdgeInsets.all(10),
             itemCount: provider.favorites.length,
             itemBuilder: (context, index) {
               final amiibo = provider.favorites[index];
+
+              // Widget Dismissible untuk fitur Swipe-to-Delete
               return Dismissible(
+                // Key harus unik untuk setiap item agar Flutter tidak bingung
                 key: Key(amiibo.id),
+
+                // Arah swipe: Horizontal (bisa kiri ke kanan atau kanan ke kiri)
+                direction: DismissDirection.horizontal,
+
+                // Tampilan background saat di-swipe
                 background: Container(
+                  color: Colors.red,
+                  alignment: Alignment.centerLeft,
+                  padding: const EdgeInsets.only(left: 20),
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+
+                // Tampilan background sekunder (saat swipe dari kanan ke kiri)
+                secondaryBackground: Container(
                   color: Colors.red,
                   alignment: Alignment.centerRight,
                   padding: const EdgeInsets.only(right: 20),
                   child: const Icon(Icons.delete, color: Colors.white),
                 ),
-                direction: DismissDirection.endToStart,
+
+                // Fungsi yang dijalankan saat item selesai di-swipe
                 onDismissed: (direction) {
+                  // 1. Hapus dari database (Hive) melalui Provider
                   provider.removeFavorite(amiibo.id);
+
+                  // 2. Tampilkan pesan (Snackbar)
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text('${amiibo.name} removed from favorites.'),
@@ -38,6 +59,8 @@ class FavoriteScreen extends StatelessWidget {
                     ),
                   );
                 },
+
+                // Child adalah widget kartu Amiibo itu sendiri
                 child: AmiiboCard(amiibo: amiibo),
               );
             },
